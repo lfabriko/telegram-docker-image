@@ -3,11 +3,15 @@ import os, sys
 from telethon.sync import TelegramClient
 from telethon.sessions import StringSession
 
-def send(dc_id, dc_ip, api_id, api_hash, session_str, username, text):
+def get_msgs(dc_id, dc_ip, api_id, api_hash, session_str, username):
     client = TelegramClient(StringSession(session_str), api_id, api_hash)
     client.session.set_dc(dc_id, dc_ip, 80)
+    limit = 1
+    if (len(sys.argv) == 2):
+        limit = int(sys.argv[1])
     with client:
-        client.send_message(username, text)
+        for message in client.get_messages(username, limit):
+            print('sender_id: ', message.sender_id, ', text: ', message.text, ', chat_id: ', message.chat.id)
 
 if __name__ == '__main__':
     arg_dc_id = int(os.environ["TELEGRAM_DC_ID"])
@@ -16,9 +20,5 @@ if __name__ == '__main__':
     arg_api_hash = os.environ["TELEGRAM_API_HASH"]
     arg_session_str = os.environ["TELEGRAM_SESSION"]
     arg_username = os.environ["TELEGRAM_USERNAME"]
-    arg_text = os.environ["TELEGRAM_TEXT"]
 
-if (len(sys.argv) == 2):
-    arg_text = sys.argv[1]
-
-send(arg_dc_id, arg_dc_ip, arg_api_id, arg_api_hash, arg_session_str, arg_username, arg_text)
+    get_msgs(arg_dc_id, arg_dc_ip, arg_api_id, arg_api_hash, arg_session_str, arg_username)

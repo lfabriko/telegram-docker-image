@@ -15,5 +15,7 @@ RUN chgrp -R 0 ${APP_DIR} && \
 
 USER ${USER_UID}
 
-CMD python3 ${APP_DIR}/send_message.py
+#CMD python3 ${APP_DIR}/send_message.py
+#CMD sleep infinity
+ENTRYPOINT ["tail", "-f", "/dev/null"]
 
